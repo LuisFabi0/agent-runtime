@@ -4,17 +4,10 @@ Assumes an empty database. If you need to re-seed, reset first:
     docker compose down -v && docker compose up -d
 """
 
-from datetime import datetime, timedelta, UTC
+from datetime import UTC, datetime, timedelta
 
 from agent_runtime.db import SessionLocal, engine
-from agent_runtime.models import (
-    Appointment,
-    Base,
-    Customer,
-    Professional,
-    Service,
-    Slot
-)
+from agent_runtime.models import Appointment, Base, Customer, Professional, Service, Slot
 
 SLOT_DURATION = timedelta(minutes=30)
 WORK_START_HOUR = 9
@@ -27,7 +20,7 @@ def _generate_slots(professional_id: str, start_date: datetime) -> list[Slot]:
     slots = []
     for day_offset in range(DAYS_AHEAD):
         day = start_date + timedelta(days=day_offset)
-        current = day.replace(hour=WORK_START_HOUR, minute=0, second=0,microsecond=0)
+        current = day.replace(hour=WORK_START_HOUR, minute=0, second=0, microsecond=0)
         end_of_day = day.replace(hour=WORK_END_HOUR, minute=0, second=0, microsecond=0)
 
         while current < end_of_day:
@@ -42,13 +35,14 @@ def _generate_slots(professional_id: str, start_date: datetime) -> list[Slot]:
 
     return slots
 
+
 def main() -> None:
     Base.metadata.create_all(engine)
     print("schema created")
 
     with SessionLocal() as session:
-        cleaning = Service(name="cleaning", duration_minutes = 30)
-        checkup = Service(name="checkup", duration_minutes = 30)
+        cleaning = Service(name="cleaning", duration_minutes=30)
+        checkup = Service(name="checkup", duration_minutes=30)
         session.add_all([cleaning, checkup])
 
         ana = Professional(name="Dr Ana Test")
@@ -67,5 +61,15 @@ def main() -> None:
 
         session.flush()
 
-        already
+        already_booked = Appointment(
+            slot_id=slots[0].id, customer_id=alice.id, service_id=cleaning.id
+        )
 
+        session.add(already_booked)
+
+        session.commit()
+        print(f"seeded {len(slots)} slots, 2 services, 2 professionals, 2 customers, 1 appointment")
+
+
+if __name__ == "__main__":
+    main()
