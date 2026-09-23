@@ -7,7 +7,13 @@ authors = [
     { name = "luisfabio", email = "luisf0pvh@gmail.com" }
 ]
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "fastapi>=0.141.1",
+    "psycopg[binary]>=3.3.5",
+    "pydantic-settings>=2.15.0",
+    "sqlalchemy>=2.0.52",
+    "uvicorn[standard]>=0.52.4",
+]
 
 [build-system]
 requires = ["uv_build>=0.12.12,<0.13.0"]
@@ -15,6 +21,7 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
+    "httpx2>=2.12.0",
     "mypy>=2.3.1",
     "pytest>=9.1.1",
     "ruff>=0.16.6",
